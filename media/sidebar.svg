@@ -1,0 +1,9 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- branch connectors -->
+  <path d="M7 6 C7 13, 13 11, 16 12" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M7 6 C7 18, 12 17, 15 18" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <!-- nodes -->
+  <circle cx="7" cy="6" r="3" fill="currentColor"/>
+  <circle cx="17" cy="12" r="2.4" fill="currentColor"/>
+  <circle cx="16" cy="18" r="2" fill="currentColor"/>
+</svg>

@@ -1,0 +1,32 @@
+# Dependencies & build output
+node_modules/
+out/
+dist/
+*.vsix
+.vscode-test/
+
+# Logs & caches
+*.log
+npm-debug.log*
+.npm/
+.eslintcache
+
+# Secrets & credentials — never commit
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.p12
+*.crt
+secrets.json
+.secrets/
+**/credentials*.json
+.claude/
+.anthropic/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~

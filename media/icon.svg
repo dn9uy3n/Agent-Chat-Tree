@@ -1,0 +1,51 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1f6feb"/>
+      <stop offset="1" stop-color="#0a3d8f"/>
+    </linearGradient>
+    <linearGradient id="user" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7fd4ff"/>
+      <stop offset="1" stop-color="#4fc3f7"/>
+    </linearGradient>
+    <linearGradient id="ai" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8ce99a"/>
+      <stop offset="1" stop-color="#51cf66"/>
+    </linearGradient>
+    <filter id="sh" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- rounded square background -->
+  <rect x="0" y="0" width="128" height="128" rx="28" fill="url(#bg)"/>
+
+  <!-- connector branches (drawn first, behind nodes) -->
+  <g stroke="#ffffff" stroke-opacity="0.55" stroke-width="3.5" stroke-linecap="round" fill="none">
+    <!-- root -> child A -->
+    <path d="M40 34 C40 56, 64 50, 76 62"/>
+    <!-- root -> child B -->
+    <path d="M40 34 C40 78, 56 84, 72 94"/>
+    <!-- child A -> leaf -->
+    <path d="M84 62 C100 62, 96 44, 100 40"/>
+  </g>
+
+  <!-- nodes -->
+  <g filter="url(#sh)">
+    <!-- root: user -->
+    <circle cx="40" cy="34" r="13" fill="url(#user)"/>
+    <!-- child A: ai -->
+    <circle cx="82" cy="64" r="11" fill="url(#ai)"/>
+    <!-- child B: ai -->
+    <circle cx="74" cy="96" r="9" fill="url(#ai)"/>
+    <!-- leaf: user (small) -->
+    <circle cx="102" cy="38" r="7" fill="url(#user)"/>
+  </g>
+
+  <!-- chat dots inside root node -->
+  <g fill="#0a3d8f">
+    <circle cx="35" cy="34" r="2"/>
+    <circle cx="40" cy="34" r="2"/>
+    <circle cx="45" cy="34" r="2"/>
+  </g>
+</svg>
