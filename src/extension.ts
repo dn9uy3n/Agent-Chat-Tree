@@ -502,6 +502,7 @@ function loadSessionGraph(): {
   summaries: SessionSummary[];
   parentOf: Map<string, string>;
   relationOf: Map<string, 'fork' | 'manual'>;
+  stats: { todayTokens: number; totalTokens: number; sessionCount: number };
 } {
   const projectsDir = getProjectsDir();
   const { onlyDir, cwd } = getScanScope();
@@ -531,8 +532,28 @@ function loadSessionGraph(): {
     relationOf.set(childId, 'manual');
   }
 
+  // Token stats: total across the workspace, plus the subset spent today.
+  const today = new Date().toDateString();
+  let todayTokens = 0;
+  let totalTokens = 0;
+  for (const s of sessions) {
+    for (const t of s.turns) {
+      const tok = t.inputTokens + t.outputTokens;
+      if (tok === 0) continue;
+      totalTokens += tok;
+      if (t.timestamp && new Date(t.timestamp).toDateString() === today) {
+        todayTokens += tok;
+      }
+    }
+  }
+
   const summaries = sessions.slice(0, getMaxSessions()).map(sessionToSummary);
-  return { summaries, parentOf, relationOf };
+  return {
+    summaries,
+    parentOf,
+    relationOf,
+    stats: { todayTokens, totalTokens, sessionCount: sessions.length },
+  };
 }
 
 function openBrowserPanel(context: vscode.ExtensionContext) {

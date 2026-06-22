@@ -2,7 +2,7 @@
   "name": "agent-chat-tree",
   "displayName": "Agent Chat Tree",
   "description": "Visualize Claude Code AI agent sessions as an interactive tree",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": "dn9uy3n",
   "engines": {
     "vscode": "^1.85.0"

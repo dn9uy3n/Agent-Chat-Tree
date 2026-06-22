@@ -3,7 +3,14 @@ import { Session, SessionSummary, Turn } from './sessionTree';
 
 type Relation = 'fork' | 'manual';
 
+interface Stats {
+  todayTokens: number;
+  totalTokens: number;
+  sessionCount: number;
+}
+
 type Node =
+  | { kind: 'stats' }
   | { kind: 'session'; summary: SessionSummary; depth: number; parentId?: string; relation?: Relation }
   | { kind: 'turn'; sessionId: string; turn: Turn }
   | { kind: 'searchSession'; summary: SessionSummary; hits: Turn[] }
@@ -13,6 +20,14 @@ interface Graph {
   summaries: SessionSummary[];
   parentOf: Map<string, string>;
   relationOf: Map<string, Relation>;
+  stats: Stats;
+}
+
+// Compact token formatting: 1234 -> 1.2k, 1500000 -> 1.5M.
+function fmtTokens(n: number): string {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
+  if (n >= 1_000) return (n / 1_000).toFixed(1) + 'k';
+  return String(n);
 }
 
 function sessionTitle(s: SessionSummary): string {
@@ -53,6 +68,7 @@ export class SessionTreeProvider implements vscode.TreeDataProvider<Node> {
     parentOf: Map<string, string>;
     relationOf: Map<string, Relation>;
     ordered: Node[];
+    stats: Stats;
   } | null = null;
 
   // Active search query (lowercased) and cached results.
@@ -84,7 +100,7 @@ export class SessionTreeProvider implements vscode.TreeDataProvider<Node> {
   private getGraph() {
     if (this.cache) return this.cache;
 
-    const { summaries, parentOf, relationOf } = this.loadGraph();
+    const { summaries, parentOf, relationOf, stats } = this.loadGraph();
     const byId = new Map<string, SessionSummary>();
     for (const s of summaries) byId.set(s.id, s);
 
@@ -116,7 +132,7 @@ export class SessionTreeProvider implements vscode.TreeDataProvider<Node> {
     };
     for (const root of roots) visit(root, 0);
 
-    this.cache = { byId, childrenOf, parentOf, relationOf, ordered };
+    this.cache = { byId, childrenOf, parentOf, relationOf, ordered, stats };
     return this.cache;
   }
 
@@ -138,6 +154,23 @@ export class SessionTreeProvider implements vscode.TreeDataProvider<Node> {
   }
 
   getTreeItem(node: Node): vscode.TreeItem {
+    if (node.kind === 'stats') {
+      const { todayTokens, totalTokens, sessionCount } = this.getGraph().stats;
+      const item = new vscode.TreeItem(
+        `Today ${fmtTokens(todayTokens)}  ·  Total ${fmtTokens(totalTokens)}`,
+        vscode.TreeItemCollapsibleState.None
+      );
+      item.id = 'stats';
+      item.description = `${sessionCount} session${sessionCount === 1 ? '' : 's'}`;
+      item.iconPath = new vscode.ThemeIcon('graph');
+      item.tooltip =
+        `Tokens used today: ${todayTokens.toLocaleString()}\n` +
+        `Total tokens (workspace): ${totalTokens.toLocaleString()}\n` +
+        `Sessions: ${sessionCount}`;
+      item.contextValue = 'stats';
+      return item;
+    }
+
     if (node.kind === 'searchSession') {
       const s = node.summary;
       const item = new vscode.TreeItem(
@@ -250,7 +283,8 @@ export class SessionTreeProvider implements vscode.TreeDataProvider<Node> {
     const g = this.getGraph();
 
     if (!node) {
-      return g.ordered;
+      // Token stats banner first, then the session tree.
+      return [{ kind: 'stats' as const }, ...g.ordered];
     }
 
     if (node.kind === 'session') {

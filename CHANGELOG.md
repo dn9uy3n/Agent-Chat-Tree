@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0
+
+- Token stats banner at the top of the sidebar: tokens used today and total
+  tokens across the whole workspace, plus the session count.
+
 ## 0.2.0
 
 - Sidebar tree view scoped to the current workspace.

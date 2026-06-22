@@ -12,6 +12,7 @@ npm-debug.log*
 .eslintcache
 
 # Secrets & credentials — never commit
+.vscode/settings.json
 .env
 .env.*
 *.pem
