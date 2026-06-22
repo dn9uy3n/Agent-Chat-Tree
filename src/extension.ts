@@ -112,6 +112,13 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('agentChatTree.refreshSidebar', () => {
       treeProvider?.refresh();
     }),
+    vscode.commands.registerCommand('agentChatTree.search', () => {
+      searchPrompts();
+    }),
+    vscode.commands.registerCommand('agentChatTree.clearSearch', () => {
+      treeProvider?.setSearch(null);
+      vscode.commands.executeCommand('setContext', 'agentChatTree.searching', false);
+    }),
     vscode.commands.registerCommand('agentChatTree.resumeSession', (arg?: unknown) => {
       const id = sessionIdFromArg(arg);
       if (id) {
@@ -379,6 +386,24 @@ function currentScopedSessionIds(): string[] {
   const projectsDir = getProjectsDir();
   const { onlyDir } = getScanScope();
   return listSessionFiles(projectsDir, onlyDir).map(f => path.basename(f, '.jsonl'));
+}
+
+// Prompt for a keyword and put the sidebar into search mode, which lists
+// matching sessions and their matching prompts with the keyword highlighted.
+async function searchPrompts(): Promise<void> {
+  const keyword = await vscode.window.showInputBox({
+    placeHolder: 'Search user prompts in this workspace…',
+    prompt: 'Find a keyword across the user messages of every session',
+    value: '',
+  });
+  if (keyword === undefined) return; // cancelled
+  const trimmed = keyword.trim();
+  treeProvider?.setSearch(trimmed || null);
+  await vscode.commands.executeCommand('setContext', 'agentChatTree.searching', !!trimmed);
+  if (trimmed) {
+    // Focus the sidebar view (auto-generated `<viewId>.focus` command).
+    vscode.commands.executeCommand('agentChatTreeSidebar.focus');
+  }
 }
 
 // Descendant sessions (forks + manual children, recursively) of a given

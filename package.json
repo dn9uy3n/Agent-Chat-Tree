@@ -73,6 +73,16 @@
         "icon": "$(refresh)"
       },
       {
+        "command": "agentChatTree.search",
+        "title": "Agent Chat Tree: Search Prompts",
+        "icon": "$(search)"
+      },
+      {
+        "command": "agentChatTree.clearSearch",
+        "title": "Agent Chat Tree: Clear Search",
+        "icon": "$(close)"
+      },
+      {
         "command": "agentChatTree.toggleScope",
         "title": "Agent Chat Tree: Toggle Workspace-Only / All Sessions",
         "icon": "$(filter)"
@@ -93,6 +103,12 @@
           "command": "agentChatTree.refreshSidebar"
         },
         {
+          "command": "agentChatTree.search"
+        },
+        {
+          "command": "agentChatTree.clearSearch"
+        },
+        {
           "command": "agentChatTree.resumeSession",
           "when": "false"
         },
@@ -110,6 +126,16 @@
         }
       ],
       "view/title": [
+        {
+          "command": "agentChatTree.search",
+          "when": "view == agentChatTreeSidebar",
+          "group": "navigation@0"
+        },
+        {
+          "command": "agentChatTree.clearSearch",
+          "when": "view == agentChatTreeSidebar && agentChatTree.searching",
+          "group": "navigation@0"
+        },
         {
           "command": "agentChatTree.openPanel",
           "when": "view == agentChatTreeSidebar",
