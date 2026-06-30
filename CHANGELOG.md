@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1
+
+- Resume in Claude Code extension now detects when a session belongs to a
+  different workspace folder and falls back to the terminal, instead of
+  failing with "No conversation found with session ID".
+
 ## 0.3.0
 
 - Token stats banner at the top of the sidebar: tokens used today and total

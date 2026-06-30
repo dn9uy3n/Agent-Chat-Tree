@@ -268,6 +268,22 @@ async function resumeInExtension(sessionId: string): Promise<void> {
     if (choice) resumeInTerminal(sessionId);
     return;
   }
+  // The Claude Code extension resolves sessions against the open workspace
+  // folder. If this session belongs to a different project, the in-extension
+  // open fails with "No conversation found". Detect the mismatch up front and
+  // fall back to the terminal, which launches in the session's own cwd.
+  const session = loadSessionById(sessionId);
+  const workspaceCwd = getWorkspaceCwd();
+  if (session?.cwd && workspaceCwd && !sameCwd(session.cwd, workspaceCwd)) {
+    const choice = await vscode.window.showWarningMessage(
+      `This session belongs to a different folder (${session.cwd}). ` +
+        `The Claude Code extension can only resume sessions from the open workspace. ` +
+        `Open in terminal instead?`,
+      'Open in Terminal'
+    );
+    if (choice) resumeInTerminal(sessionId);
+    return;
+  }
   try {
     // claude-vscode.editor.open(sessionId, initialPrompt?, viewColumn?)
     await vscode.commands.executeCommand(
